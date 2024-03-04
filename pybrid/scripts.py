@@ -74,6 +74,8 @@ def setup(cfg):
 def main(cfg):
     cfg, train_loader, test_loader, model, optimizer = setup(cfg)
 
+    print(train_loader)
+
     with torch.no_grad():
         metrics = utils.to_attr_dict(
             {
