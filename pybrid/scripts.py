@@ -19,12 +19,12 @@ def setup(cfg):
         size=cfg.data.train_size,
         normalize=cfg.data.normalize,
     )
-    test_dataset = datasets.EMNIST_train_iter(
-        train=False,
-        scale=cfg.data.label_scale,
-        size=cfg.data.test_size,
-        normalize=cfg.data.normalize,
-    )
+    # test_dataset = datasets.EMNIST_train_iter(
+    #     train=False,
+    #     scale=cfg.data.label_scale,
+    #     size=cfg.data.test_size,
+    #     normalize=cfg.data.normalize,
+    # )
 
     # train_emnist = datasets.MNIST(
     #     train=False,
@@ -42,7 +42,7 @@ def setup(cfg):
     # test_dataset = torch.utils.data.ConcatDataset([test_dataset, test_emnist])
 
     train_loader = datasets.get_dataloader(train_dataset, cfg.optim.batch_size)
-    test_loader = datasets.get_dataloader(test_dataset, test_batch_size)
+    test_loader = datasets.get_dataloader(train_dataset, test_batch_size)
     # train_loader_emnist = datasets.get_dataloader(train_emnist, cfg.optim.batch_size)
     # test_loader_emnist = datasets.get_dataloader(test_emnist, test_batch_size)
 
@@ -104,8 +104,8 @@ def main(cfg):
             for batch_id, (img_batch, label_batch) in enumerate(train_loader):
                 global_batch_id = global_batch_id + 1
                 num_train_iter, avg_err = model.train_batch(
-                    label_batch,
                     img_batch,
+                    label_batch,
                     cfg.infer.num_train_iters,
                     init_std=cfg.infer.init_std,
                     fixed_preds=cfg.infer.fixed_preds_train,
