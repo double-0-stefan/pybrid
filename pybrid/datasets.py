@@ -12,7 +12,7 @@ def _one_hot_em_(labels, n_classes=47):
     arr = torch.eye(n_classes)
     return arr[labels]
 
-class EMNIST_iter(datasets.EMNIST):
+class EMNIST_train_iter(datasets.EMNIST):
     def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=None):
         transform = _get_transform(normalize=normalize, mean=(0.1307), std=(0.3081))
         super().__init__(path, download=True, transform=transform, train=train, split='balanced')
@@ -23,8 +23,8 @@ class EMNIST_iter(datasets.EMNIST):
             self._split(labels)
 
     def __getitem__(self, index):
-        target = 100
-        while target > 36:
+        # target = 100
+        while True:
             
             data, target = super().__getitem__(index)
             data = _to_vector(data)
@@ -32,6 +32,9 @@ class EMNIST_iter(datasets.EMNIST):
             if self.scale is not None:
                 target = _scale(target, self.scale)
             index += 1
+
+            if target <= 36:
+                break
         return data, target
 
     def _reduce(self, size):
@@ -294,9 +297,9 @@ def accuracy(pred_labels, true_labels):
 
 def plot_imgs(img_preds, path):
     imgs = img_preds.cpu().detach().numpy()
-    imgs = imgs[0:10, :]
+    imgs = imgs[0:20, :]
     imgs = [np.reshape(imgs[i, :], [28, 28]) for i in range(imgs.shape[0])]
-    _, axes = plt.subplots(2, 5)
+    _, axes = plt.subplots(4, 5)
     axes = axes.flatten()
     for i, img in enumerate(imgs):
         axes[i].imshow(img, cmap="gray")
