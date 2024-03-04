@@ -35,7 +35,7 @@ class EMNIST_train_iter(datasets.EMNIST):
 
             # if target <= 36:
             #     break
-        return target,data#, target
+        return data, target
 
     def _reduce(self, size):
         self.data = self.data[0:size]

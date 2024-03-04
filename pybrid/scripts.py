@@ -104,8 +104,8 @@ def main(cfg):
             for batch_id, (img_batch, label_batch) in enumerate(train_loader):
                 global_batch_id = global_batch_id + 1
                 num_train_iter, avg_err = model.train_batch(
-                    img_batch,
                     label_batch,
+                    img_batch,
                     cfg.infer.num_train_iters,
                     init_std=cfg.infer.init_std,
                     fixed_preds=cfg.infer.fixed_preds_train,
