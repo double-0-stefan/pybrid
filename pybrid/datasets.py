@@ -8,14 +8,115 @@ from torchvision import datasets, transforms
 from pybrid import utils
 
 
-def _one_hot_em_(labels, n_classes=26):
+def _one_hot_em_(labels, n_classes=47):
     arr = torch.eye(n_classes)
     return arr[labels]
 
-class EMNIST(datasets.EMNIST):
+class EMNIST_iter(datasets.EMNIST):
     def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=None):
         transform = _get_transform(normalize=normalize, mean=(0.1307), std=(0.3081))
-        super().__init__(path, download=True, transform=transform, train=train, split='letters')
+        super().__init__(path, download=True, transform=transform, train=train, split='balanced')
+        self.scale = scale
+        if size is not None:
+            self._reduce(size)
+        if labels is not None:
+            self._split(labels)
+
+    def __getitem__(self, index):
+        target = 100
+        while target > 36:
+            
+            data, target = super().__getitem__(index)
+            data = _to_vector(data)
+            target = _one_hot_em_(target-1)
+            if self.scale is not None:
+                target = _scale(target, self.scale)
+            index += 1
+        return data, target
+
+    def _reduce(self, size):
+        self.data = self.data[0:size]
+        self.targets = self.targets[0:size]
+
+    def _split(self, labels):
+        idxs = torch.empty(0).long()
+        for label in labels:
+            idxs = torch.cat((idxs, (self.targets == label).nonzero().squeeze()))
+        self.data = self.data[idxs]
+        self.targets = self.targets[idxs]
+
+
+class EMNIST_digits(datasets.EMNIST):
+    def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=None):
+        transform = _get_transform(normalize=normalize, mean=(0.1307), std=(0.3081))
+        super().__init__(path, download=True, transform=transform, train=train, split='balanced')
+        self.scale = scale
+        if size is not None:
+            self._reduce(size)
+        if labels is not None:
+            self._split(labels)
+
+    def __getitem__(self, index):
+        target = 100
+        while target > 10:
+            
+            data, target = super().__getitem__(index)
+            data = _to_vector(data)
+            target = _one_hot_em_(target-1)
+            if self.scale is not None:
+                target = _scale(target, self.scale)
+            index += 1
+        return data, target
+
+    def _reduce(self, size):
+        self.data = self.data[0:size]
+        self.targets = self.targets[0:size]
+
+    def _split(self, labels):
+        idxs = torch.empty(0).long()
+        for label in labels:
+            idxs = torch.cat((idxs, (self.targets == label).nonzero().squeeze()))
+        self.data = self.data[idxs]
+        self.targets = self.targets[idxs]
+
+
+class EMNIST_letters(datasets.EMNIST):
+    def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=None):
+        transform = _get_transform(normalize=normalize, mean=(0.1307), std=(0.3081))
+        super().__init__(path, download=True, transform=transform, train=train, split='balanced')
+        self.scale = scale
+        if size is not None:
+            self._reduce(size)
+
+    def __getitem__(self, index):
+        target = 100
+        while target <= 10 or target > 36:
+            
+            data, target = super().__getitem__(index)
+            data = _to_vector(data)
+            target = _one_hot_em_(target-1)
+            if self.scale is not None:
+                target = _scale(target, self.scale)
+            index += 1
+        return data, target
+
+    def _reduce(self, size):
+        self.data = self.data[0:size]
+        self.targets = self.targets[0:size]
+
+    def _split(self, labels):
+        idxs = torch.empty(0).long()
+        for label in labels:
+            idxs = torch.cat((idxs, (self.targets == label).nonzero().squeeze()))
+        self.data = self.data[idxs]
+        self.targets = self.targets[idxs]
+
+
+
+class EMNIST_dig(datasets.EMNIST):
+    def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=None):
+        transform = _get_transform(normalize=normalize, mean=(0.1307), std=(0.3081))
+        super().__init__(path, download=True, transform=transform, train=train, split='digits')
         self.scale = scale
         if size is not None:
             self._reduce(size)

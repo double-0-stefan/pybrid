@@ -12,34 +12,34 @@ def setup(cfg):
         cfg.optim.batch_size if cfg.optim.test_batch_size is None else cfg.optim.test_batch_size
     )
 
-    datasets.download_mnist()
-    train_dataset = datasets.MNIST(
+    # datasets.download_mnist()
+    train_dataset = datasets.EMNIST_train_iter(
         train=True,
         scale=cfg.data.label_scale,
         size=cfg.data.train_size,
         normalize=cfg.data.normalize,
     )
-    test_dataset = datasets.MNIST(
+    test_dataset = datasets.EMNIST_train_iter(
         train=False,
         scale=cfg.data.label_scale,
         size=cfg.data.test_size,
         normalize=cfg.data.normalize,
     )
 
-    train_emnist = datasets.MNIST(
-        train=False,
-        scale=cfg.data.label_scale,
-        size=cfg.data.test_size,
-        normalize=cfg.data.normalize,
-    )    
-    test_emnist = datasets.MNIST(
-        train=True,
-        scale=cfg.data.label_scale,
-        size=cfg.data.test_size,
-        normalize=cfg.data.normalize,
-    )
-    train_dataset = torch.utils.data.ConcatDataset([train_dataset, train_emnist])
-    test_dataset = torch.utils.data.ConcatDataset([test_dataset, test_emnist])
+    # train_emnist = datasets.MNIST(
+    #     train=False,
+    #     scale=cfg.data.label_scale,
+    #     size=cfg.data.test_size,
+    #     normalize=cfg.data.normalize,
+    # )    
+    # test_emnist = datasets.MNIST(
+    #     train=True,
+    #     scale=cfg.data.label_scale,
+    #     size=cfg.data.test_size,
+    #     normalize=cfg.data.normalize,
+    # )
+    # train_dataset = torch.utils.data.ConcatDataset([train_dataset, train_emnist])
+    # test_dataset = torch.utils.data.ConcatDataset([test_dataset, test_emnist])
 
     train_loader = datasets.get_dataloader(train_dataset, cfg.optim.batch_size)
     test_loader = datasets.get_dataloader(test_dataset, test_batch_size)
