@@ -13,7 +13,7 @@ def _one_hot_em_(labels, n_classes=26):
     return arr[labels]
 
 class EMNIST_train_iter(datasets.EMNIST):
-    def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=list(range(36))):
+    def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=list(range(26))):
         transform = _get_transform(normalize=normalize, mean=(0.1307), std=(0.3081))
         super().__init__(path, download=True, transform=transform, train=train, split='letters')
         self.scale = scale
@@ -35,7 +35,7 @@ class EMNIST_train_iter(datasets.EMNIST):
 
             # if target <= 36:
             #     break
-        return data, target
+        return target,data#, target
 
     def _reduce(self, size):
         self.data = self.data[0:size]
