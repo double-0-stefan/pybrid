@@ -8,14 +8,14 @@ from torchvision import datasets, transforms
 from pybrid import utils
 
 
-def _one_hot_em_(labels, n_classes=47):
+def _one_hot_em_(labels, n_classes=26):
     arr = torch.eye(n_classes)
     return arr[labels]
 
 class EMNIST_train_iter(datasets.EMNIST):
     def __init__(self, train, path="./data", size=None, scale=None, normalize=False, labels=None):
         transform = _get_transform(normalize=normalize, mean=(0.1307), std=(0.3081))
-        super().__init__(path, download=True, transform=transform, train=train, split='balanced')
+        super().__init__(path, download=True, transform=transform, train=train, split='letters')
         self.scale = scale
         if size is not None:
             self._reduce(size)
@@ -24,17 +24,17 @@ class EMNIST_train_iter(datasets.EMNIST):
 
     def __getitem__(self, index):
         # target = 100
-        while True:
+        # while True:
             
-            data, target = super().__getitem__(index)
-            data = _to_vector(data)
-            target = _one_hot_em_(target-1)
-            if self.scale is not None:
-                target = _scale(target, self.scale)
-            index += 1
+        data, target = super().__getitem__(index)
+        data = _to_vector(data)
+        target = _one_hot_em_(target-1)
+        if self.scale is not None:
+            target = _scale(target, self.scale)
+        index += 1
 
-            if target <= 36:
-                break
+            # if target <= 36:
+            #     break
         return data, target
 
     def _reduce(self, size):
